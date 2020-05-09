@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri May  8 18:36:14 2020
-
-@author: Tyler
-"""
 
 
 from keras.applications import VGG16
@@ -23,7 +17,9 @@ x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
 x_test = x_test.astype('float32')
 x_test = x_test/255
 import numpy as np
-
+titles = ["T-shirt or top","Trouser", "Pullover", 
+          "Dress", "Coat", "Sandal", "Shirt", "Sneaker", 
+          "Bag", "Ankle boot"]
 
 from vis.visualization import visualize_activation
 from vis.utils import utils
@@ -61,4 +57,20 @@ grads = visualize_saliency(model, layer_idx, filter_indices=class_idx, seed_inpu
 # Plot with 'jet' colormap to visualize as a heatmap.
 plt.imshow(grads, cmap='jet')
 
+
+for class_idx in np.arange(10):    
+    indices = np.where(y_test[:, class_idx] == 1.)[0]
+    idx = indices[0]
+
+    f, ax = plt.subplots(1, 2)
+    ax[0].imshow(x_test[idx][..., 0])
+
+    i=0
+    ax[i].set_title(titles[class_idx])
+    grads = visualize_saliency(model, layer_idx, filter_indices=class_idx, 
+                               seed_input=x_test[idx])
+    
+    modifier = 'vanilla'
+    ax[i+1].set_title(modifier)    
+    ax[i+1].imshow(grads, cmap='jet')
 
